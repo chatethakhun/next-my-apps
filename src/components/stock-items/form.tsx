@@ -2,48 +2,64 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { createStockItemAction } from "@/actions/stock-items/actions";
+import {
+  createStockItemAction,
+  updateStockItemAction,
+} from "@/actions/stock-items/actions";
+import { FormField } from "@/components/form/form-field";
 import {
   stockItemFormDefaultValues,
   stockItemFormSchema,
   type StockItemFormValues,
 } from "@/lib/stock-items/schema";
-import { FormField } from "@/components/form/form-field";
 import { fadeIn, fadeInUp, staggerContainer } from "@/lib/motion";
 
+type StockItemFormProps = {
+  mode: "create" | "edit";
+  itemId?: string;
+  defaultValues?: StockItemFormValues;
+};
 
-export function StockItemForm() {
+export function StockItemForm({ mode, itemId, defaultValues }: StockItemFormProps) {
+  const router = useRouter();
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
+
+  const isEdit = mode === "edit";
 
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors, isSubmitting, isValid, isDirty },
   } = useForm<StockItemFormValues>({
     resolver: zodResolver(stockItemFormSchema),
-    defaultValues: stockItemFormDefaultValues,
+    defaultValues: defaultValues ?? stockItemFormDefaultValues,
     mode: "onChange",
     reValidateMode: "onChange",
   });
 
   async function onSubmit(values: StockItemFormValues) {
     setSubmitError(null);
-    setSubmitSuccess(false);
 
-    const result = await createStockItemAction(values);
+    const result =
+      isEdit && itemId
+        ? await updateStockItemAction(itemId, values)
+        : await createStockItemAction(values);
 
     if (!result.success) {
       setSubmitError(result.error);
       return;
     }
 
-    setSubmitSuccess(true);
-    reset(stockItemFormDefaultValues);
+    router.push("/app/stock-items");
+    router.refresh();
+  }
+
+  function handleCancel() {
+    router.push("/app/stock-items");
   }
 
   function fieldClass(hasError: boolean) {
@@ -61,17 +77,8 @@ export function StockItemForm() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <motion.div variants={fadeInUp} initial="hidden" animate="visible">
-        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-          Add stock item
-        </h2>
-        <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-          Fields are validated as you type.
-        </p>
-      </motion.div>
-
       <motion.div
-        className="mt-6 grid gap-2 sm:grid-cols-2"
+        className="grid gap-2 sm:grid-cols-2"
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -160,20 +167,6 @@ export function StockItemForm() {
             {submitError}
           </motion.p>
         ) : null}
-
-        {submitSuccess ? (
-          <motion.p
-            key="submit-success"
-            className="mt-4 text-sm text-success"
-            role="status"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ type: "spring", stiffness: 400, damping: 25 }}
-          >
-            Item saved successfully.
-          </motion.p>
-        ) : null}
       </AnimatePresence>
 
       <motion.div
@@ -181,7 +174,7 @@ export function StockItemForm() {
         variants={fadeInUp}
         initial="hidden"
         animate="visible"
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.15 }}
       >
         <motion.button
           type="submit"
@@ -194,6 +187,8 @@ export function StockItemForm() {
               <span className="loading loading-spinner loading-sm" />
               Saving…
             </>
+          ) : isEdit ? (
+            "Save changes"
           ) : (
             "Save item"
           )}
@@ -201,15 +196,11 @@ export function StockItemForm() {
         <motion.button
           type="button"
           className="btn btn-ghost"
-          disabled={isSubmitting || !isDirty}
+          disabled={isSubmitting}
           whileTap={{ scale: 0.97 }}
-          onClick={() => {
-            reset(stockItemFormDefaultValues);
-            setSubmitError(null);
-            setSubmitSuccess(false);
-          }}
+          onClick={handleCancel}
         >
-          Reset
+          Cancel
         </motion.button>
       </motion.div>
     </motion.form>

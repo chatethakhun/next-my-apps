@@ -1,24 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { fadeInUp, staggerContainer } from "@/lib/motion";
-
-export type StockItemRecord = {
-  id?: string | number;
-  name?: string;
-  brand?: string;
-  price?: string | number;
-  unit?: string;
-};
+import type { StockItem } from "@/lib/stock-items/types";
 
 type StockItemsListProps = {
-  items: StockItemRecord[];
+  items: StockItem[];
 };
 
 export function StockItemsList({ items }: StockItemsListProps) {
-  if (items.length === 0) return null;
-
   return (
     <motion.section
       initial={{ opacity: 0, y: 12 }}
@@ -36,18 +28,25 @@ export function StockItemsList({ items }: StockItemsListProps) {
       >
         {items.map((item) => (
           <motion.li
-            key={String(item.id ?? item.name)}
-            className="px-4 py-3 text-sm"
+            key={item.id}
+            className="flex items-start justify-between gap-4 px-4 py-3 text-sm"
             variants={fadeInUp}
             layout
           >
-            <p className="font-medium text-zinc-900 dark:text-zinc-50">
-              {String(item.name ?? "—")}
-            </p>
-            <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-              {String(item.brand ?? "—")} · {String(item.price ?? "—")}
-              {item.unit ? ` / ${String(item.unit)}` : ""}
-            </p>
+            <div className="min-w-0">
+              <p className="font-medium text-zinc-900 dark:text-zinc-50">
+                {item.name}
+              </p>
+              <p className="mt-1 text-zinc-600 dark:text-zinc-400">
+                {item.brand} · {item.price} / {item.unit}
+              </p>
+            </div>
+            <Link
+              href={`/app/stock-items/${item.id}/edit`}
+              className="btn btn-ghost btn-sm shrink-0"
+            >
+              Edit
+            </Link>
           </motion.li>
         ))}
       </motion.ul>
