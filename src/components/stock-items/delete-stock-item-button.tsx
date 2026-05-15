@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { deleteStockItemAction } from "@/actions/stock-items/actions";
+import { useToast } from "@/components/toast/toast-provider";
 
 type DeleteStockItemButtonProps = {
   id: string;
@@ -20,9 +21,9 @@ export function DeleteStockItemButton({
   size = "sm",
 }: DeleteStockItemButtonProps) {
   const router = useRouter();
+  const { success, error: showError } = useToast();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [mounted, setMounted] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const sizeClass = size === "md" ? "btn-md" : "btn-sm";
@@ -32,7 +33,6 @@ export function DeleteStockItemButton({
   }, []);
 
   function openModal() {
-    setError(null);
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (!dialog.open) {
@@ -45,18 +45,18 @@ export function DeleteStockItemButton({
   }
 
   async function handleDelete() {
-    setError(null);
     setIsDeleting(true);
 
     const result = await deleteStockItemAction(id);
 
     if (!result.success) {
-      setError(result.error);
+      showError(result.error);
       setIsDeleting(false);
       return;
     }
 
     closeModal();
+    success("Item deleted successfully");
     router.push(redirectTo);
     router.refresh();
   }
@@ -75,12 +75,6 @@ export function DeleteStockItemButton({
             </span>{" "}
             will be removed permanently. This cannot be undone.
           </p>
-
-          {error ? (
-            <p className="mb-4 text-sm text-error" role="alert">
-              {error}
-            </p>
-          ) : null}
 
           <div className="modal-action flex-col gap-2 sm:flex-row">
             <button

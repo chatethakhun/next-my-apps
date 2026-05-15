@@ -1,9 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -11,12 +10,13 @@ import {
   updateStockItemAction,
 } from "@/actions/stock-items/actions";
 import { FormField } from "@/components/form/form-field";
+import { useToast } from "@/components/toast/toast-provider";
 import {
   stockItemFormDefaultValues,
   stockItemFormSchema,
   type StockItemFormValues,
 } from "@/lib/stock-items/schema";
-import { fadeIn, fadeInUp, staggerContainer } from "@/lib/motion";
+import { fadeInUp, staggerContainer } from "@/lib/motion";
 
 type StockItemFormProps = {
   mode: "create" | "edit";
@@ -26,7 +26,7 @@ type StockItemFormProps = {
 
 export function StockItemForm({ mode, itemId, defaultValues }: StockItemFormProps) {
   const router = useRouter();
-  const [submitError, setSubmitError] = useState<string | null>(null);
+  const { success, error: showError } = useToast();
 
   const isEdit = mode === "edit";
 
@@ -42,18 +42,17 @@ export function StockItemForm({ mode, itemId, defaultValues }: StockItemFormProp
   });
 
   async function onSubmit(values: StockItemFormValues) {
-    setSubmitError(null);
-
     const result =
       isEdit && itemId
         ? await updateStockItemAction(itemId, values)
         : await createStockItemAction(values);
 
     if (!result.success) {
-      setSubmitError(result.error);
+      showError(result.error);
       return;
     }
 
+    success(isEdit ? "Item updated successfully" : "Item created successfully");
     router.push("/app/stock-items");
     router.refresh();
   }
@@ -152,22 +151,6 @@ export function StockItemForm({ mode, itemId, defaultValues }: StockItemFormProp
           </motion.div>
         </FormField>
       </motion.div>
-
-      <AnimatePresence mode="wait">
-        {submitError ? (
-          <motion.p
-            key="submit-error"
-            className="mt-4 text-sm text-error"
-            role="alert"
-            variants={fadeIn}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-          >
-            {submitError}
-          </motion.p>
-        ) : null}
-      </AnimatePresence>
 
       <motion.div
         className="mt-6 flex flex-wrap items-center gap-3"
