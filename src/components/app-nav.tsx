@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { signOutAction } from "@/actions/auth/actions";
 import { appDrawerId } from "@/lib/app-menu";
+import { LogOutIcon, MenuIcon } from "lucide-react";
 
 type AppNavProps = {
   user: {
@@ -12,21 +13,7 @@ type AppNavProps = {
 };
 
 function HamburgerIcon() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="size-6"
-      aria-hidden
-    >
-      <path d="M4 7h16M4 12h16M4 17h16" />
-    </svg>
-  );
+  return <MenuIcon className="size-6" />;
 }
 
 export function AppNav({ user }: AppNavProps) {
@@ -70,6 +57,7 @@ export function AppNav({ user }: AppNavProps) {
             type="submit"
             className="btn btn-outline btn-error btn-sm sm:btn-md"
           >
+            <LogOutIcon className="w-4 h-4" />
             Sign out
           </button>
         </form>

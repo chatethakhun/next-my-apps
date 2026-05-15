@@ -1,5 +1,5 @@
 import Link from "next/link";
-
+import { ArrowLeftIcon } from "lucide-react";
 type StockItemFormPageShellProps = {
   title: string;
   description: string;
@@ -18,7 +18,8 @@ export function StockItemFormPageShell({
           href="/app/stock-items"
           className="btn btn-ghost btn-sm -ml-2 gap-1 px-2"
         >
-          ← Back to items
+          <ArrowLeftIcon className="w-4 h-4" />
+          Back to items
         </Link>
         <h1 className="mt-3 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
           {title}
