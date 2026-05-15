@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { DeleteStockItemButton } from "@/components/stock-items/delete-stock-item-button";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 import type { StockItem } from "@/lib/stock-items/types";
 
@@ -29,7 +30,7 @@ export function StockItemsList({ items }: StockItemsListProps) {
         {items.map((item) => (
           <motion.li
             key={item.id}
-            className="flex items-start justify-between gap-4 px-4 py-3 text-sm"
+            className="flex items-center justify-between gap-4 px-4 py-3 text-sm"
             variants={fadeInUp}
             layout
           >
@@ -41,12 +42,15 @@ export function StockItemsList({ items }: StockItemsListProps) {
                 {item.brand} · {item.price} / {item.unit}
               </p>
             </div>
-            <Link
-              href={`/app/stock-items/${item.id}/edit`}
-              className="btn btn-ghost btn-sm shrink-0"
-            >
-              Edit
-            </Link>
+            <div className="flex shrink-0 items-center gap-1">
+              <Link
+                href={`/app/stock-items/${item.id}/edit`}
+                className="btn btn-ghost btn-sm"
+              >
+                Edit
+              </Link>
+              <DeleteStockItemButton id={item.id} name={item.name} />
+            </div>
           </motion.li>
         ))}
       </motion.ul>

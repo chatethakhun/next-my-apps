@@ -49,6 +49,9 @@ export async function getStockItems(): Promise<StockItem[]> {
 }
 
 export async function getStockItemById(id: string): Promise<StockItem | null> {
+  const { user } = await requireAuth();
+  if (!user?.email) return null;
+
   try {
     const baseUrl = getBaseUrl();
     if (!baseUrl) return null;
@@ -60,7 +63,11 @@ export async function getStockItemById(id: string): Promise<StockItem | null> {
     if (!response.ok) return null;
 
     const data: unknown = await response.json();
-    return normalizeStockItem(data);
+    const item = normalizeStockItem(data);
+
+    if (!item || item.ownerEmail !== user.email) return null;
+
+    return item;
   } catch (error) {
     console.error(error);
     return null;
@@ -152,6 +159,48 @@ export async function updateStockItemAction(
       return {
         success: false,
         error: "Could not update item. Please try again.",
+      };
+    }
+
+    revalidatePath("/app/stock-items");
+    revalidatePath(`/app/stock-items/${id}/edit`);
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      error: "Network error. Please try again.",
+    };
+  }
+}
+
+export async function deleteStockItemAction(
+  id: string,
+): Promise<StockItemActionResult> {
+  const { user } = await requireAuth();
+  if (!user?.email) {
+    return { success: false, error: "Unauthorized" };
+  }
+
+  const item = await getStockItemById(id);
+  if (!item) {
+    return { success: false, error: "Item not found" };
+  }
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) {
+    return { success: false, error: "EXTERNAL_URL is not configured" };
+  }
+
+  try {
+    const response = await fetch(`${baseUrl}/stock-items/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: "Could not delete item. Please try again.",
       };
     }
 
