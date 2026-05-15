@@ -13,7 +13,7 @@ export function StockItemFormPageSkeleton() {
 
       <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
         <div className="grid gap-4 sm:grid-cols-2">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: 5 }).map((_, index) => (
             <div key={index} className="space-y-2">
               <Skeleton className="h-4 w-16" />
               <Skeleton className="h-12 w-full rounded-lg" />

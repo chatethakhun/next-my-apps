@@ -6,6 +6,7 @@ export type StockItem = {
   price: number;
   unit: string;
   brand: string;
+  quantity: number;
   createdAt?: string;
   ownerEmail: string;
 };
@@ -20,13 +21,14 @@ export function isStockItem(value: unknown): value is StockItem {
 }
 
 export function toStockItemFormValues(
-  item: Pick<StockItem, "name" | "price" | "unit" | "brand">,
+  item: Pick<StockItem, "name" | "price" | "unit" | "brand" | "quantity">,
 ): StockItemFormValues {
   return {
     name: item.name,
     price: String(item.price),
     unit: item.unit,
     brand: item.brand,
+    quantity: String(item.quantity),
   };
 }
 
@@ -44,6 +46,7 @@ export function normalizeStockItem(value: unknown): StockItem | null {
     price: Number(item.price ?? 0),
     unit: String(item.unit ?? ""),
     brand: String(item.brand ?? ""),
+    quantity: Number(item.quantity ?? 0),
     createdAt: typeof item.createdAt === "string" ? item.createdAt : undefined,
     ownerEmail: String(item.ownerEmail ?? ""),
   };

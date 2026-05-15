@@ -150,6 +150,24 @@ export function StockItemForm({ mode, itemId, defaultValues }: StockItemFormProp
             />
           </motion.div>
         </FormField>
+
+        <FormField id="quantity" label="Quantity" error={errors.quantity?.message}>
+          <motion.div
+            animate={errors.quantity ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <input
+              id="quantity"
+              type="text"
+              inputMode="numeric"
+              autoComplete="off"
+              placeholder="e.g. 10"
+              className={fieldClass(Boolean(errors.quantity))}
+              aria-invalid={Boolean(errors.quantity)}
+              {...register("quantity")}
+            />
+          </motion.div>
+        </FormField>
       </motion.div>
 
       <motion.div
