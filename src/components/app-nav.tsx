@@ -68,7 +68,7 @@ export function AppNav({ user }: AppNavProps) {
           </div>
           <button
             type="submit"
-            className="btn btn-outline btn-primary btn-sm sm:btn-md"
+            className="btn btn-outline btn-error btn-sm sm:btn-md"
           >
             Sign out
           </button>
