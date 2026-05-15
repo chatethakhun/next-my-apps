@@ -8,6 +8,7 @@ import {
   type StockItemFormValues,
 } from "@/lib/stock-items/schema";
 import { normalizeStockItem, type StockItem } from "@/lib/stock-items/types";
+import { requireAuth } from "@/auth";
 
 export type StockItemActionResult =
   | { success: true }
@@ -18,6 +19,10 @@ function getBaseUrl() {
 }
 
 export async function getStockItems(): Promise<StockItem[]> {
+  const { user } = await requireAuth();
+  if (!user) {
+    return [];
+  }
   try {
     const baseUrl = getBaseUrl();
     if (!baseUrl) return [];
@@ -33,7 +38,10 @@ export async function getStockItems(): Promise<StockItem[]> {
 
     return data
       .map((item) => normalizeStockItem(item))
-      .filter((item): item is StockItem => item !== null);
+      .filter(
+        (item): item is StockItem =>
+          item !== null && item.ownerEmail === user.email!,
+      );
   } catch (error) {
     console.error(error);
     return [];
@@ -62,6 +70,13 @@ export async function getStockItemById(id: string): Promise<StockItem | null> {
 export async function createStockItemAction(
   values: StockItemFormValues,
 ): Promise<StockItemActionResult> {
+  const { user } = await requireAuth();
+  if (!user) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
   const parsed = stockItemFormSchema.safeParse(values);
 
   if (!parsed.success) {
@@ -80,7 +95,7 @@ export async function createStockItemAction(
     const response = await fetch(`${baseUrl}/stock-items`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(toStockItemPayload(parsed.data)),
+      body: JSON.stringify(toStockItemPayload(parsed.data, user.email!)),
     });
 
     if (!response.ok) {
@@ -105,6 +120,13 @@ export async function updateStockItemAction(
   id: string,
   values: StockItemFormValues,
 ): Promise<StockItemActionResult> {
+  const { user } = await requireAuth();
+  if (!user) {
+    return {
+      success: false,
+      error: "Unauthorized",
+    };
+  }
   const parsed = stockItemFormSchema.safeParse(values);
 
   if (!parsed.success) {
@@ -123,7 +145,7 @@ export async function updateStockItemAction(
     const response = await fetch(`${baseUrl}/stock-items/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(toStockItemPayload(parsed.data)),
+      body: JSON.stringify(toStockItemPayload(parsed.data, user.email!)),
     });
 
     if (!response.ok) {

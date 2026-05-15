@@ -7,6 +7,7 @@ export type StockItem = {
   unit: string;
   brand: string;
   createdAt?: string;
+  ownerEmail: string;
 };
 
 export function isStockItem(value: unknown): value is StockItem {
@@ -43,7 +44,7 @@ export function normalizeStockItem(value: unknown): StockItem | null {
     price: Number(item.price ?? 0),
     unit: String(item.unit ?? ""),
     brand: String(item.brand ?? ""),
-    createdAt:
-      typeof item.createdAt === "string" ? item.createdAt : undefined,
+    createdAt: typeof item.createdAt === "string" ? item.createdAt : undefined,
+    ownerEmail: String(item.ownerEmail ?? ""),
   };
 }

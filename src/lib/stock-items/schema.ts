@@ -42,11 +42,15 @@ export const stockItemFormDefaultValues: StockItemFormValues = {
   brand: "",
 };
 
-export function toStockItemPayload(values: StockItemFormValues) {
+export function toStockItemPayload(
+  values: StockItemFormValues,
+  ownerEmail: string,
+) {
   return {
     name: values.name.trim(),
     price: parseFloat(values.price),
     unit: values.unit.trim(),
     brand: values.brand.trim(),
+    ownerEmail: ownerEmail.trim(),
   };
 }
