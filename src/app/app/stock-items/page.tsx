@@ -1,17 +1,22 @@
 import { getStockItems } from "@/actions/stock-items/actions";
+import { StockItemForm } from "@/components/stock-items/form";
+import { StockItemsPageHeader } from "@/components/stock-items/page-header";
+import {
+  StockItemsList,
+  type StockItemRecord,
+} from "@/components/stock-items/stock-items-list";
 
 export default async function StockItemsPage() {
   const stockItems = await getStockItems();
-  console.log({ stockItems });
+  const items = Array.isArray(stockItems)
+    ? (stockItems as StockItemRecord[])
+    : [];
 
   return (
-    <div>
-      <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-        Stock Items
-      </h1>
-      <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-        Manage your household stock here.
-      </p>
+    <div className="space-y-8">
+      <StockItemsPageHeader />
+      <StockItemForm />
+      <StockItemsList items={items} />
     </div>
   );
 }
