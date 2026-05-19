@@ -1,8 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
+
 import { AppNav } from "@/components/app-nav";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebarSkeleton } from "@/components/skeletons/app-sidebar-skeleton";
 import { appDrawerId } from "@/lib/app-menu";
+
+const AppSidebar = dynamic(
+  () => import("@/components/app-sidebar").then((mod) => mod.AppSidebar),
+  { loading: () => <AppSidebarSkeleton /> },
+);
 
 type AppShellProps = {
   user: {

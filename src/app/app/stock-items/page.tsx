@@ -1,8 +1,10 @@
 import Link from "next/link";
 
 import { getStockItems } from "@/actions/stock-items/actions";
-import { StockItemsPageHeader } from "@/components/stock-items/page-header";
-import { StockItemsList } from "@/components/stock-items/stock-items-list";
+import {
+  StockItemsList,
+  StockItemsPageHeader,
+} from "@/components/stock-items/lazy";
 
 export default async function StockItemsPage() {
   const items = await getStockItems();

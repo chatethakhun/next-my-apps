@@ -1,4 +1,4 @@
-import { StockItemForm } from "@/components/stock-items/form";
+import { StockItemForm } from "@/components/stock-items/lazy";
 import { StockItemFormPageShell } from "@/components/stock-items/form-page-shell";
 
 export default function NewStockItemPage() {

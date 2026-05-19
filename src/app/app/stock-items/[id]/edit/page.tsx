@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 
 import { getStockItemById } from "@/actions/stock-items/actions";
-import { DeleteStockItemButton } from "@/components/stock-items/delete-stock-item-button";
-import { StockItemForm } from "@/components/stock-items/form";
+import {
+  DeleteStockItemButton,
+  StockItemForm,
+} from "@/components/stock-items/lazy";
 import { StockItemFormPageShell } from "@/components/stock-items/form-page-shell";
 import { toStockItemFormValues } from "@/lib/stock-items/types";
 
