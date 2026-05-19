@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Geist_Mono } from "next/font/google";
-import "@fontsource-variable/google-sans-flex/wght.css";
+import { Krub } from "next/font/google";
 
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const krub = Krub({
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
+  display: "swap",
+  variable: "--font-krub",
 });
 
 export const metadata: Metadata = {
@@ -21,10 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${krub.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-sans">
         <Providers>{children}</Providers>
       </body>
