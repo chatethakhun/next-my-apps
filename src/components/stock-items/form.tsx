@@ -116,7 +116,7 @@ export function StockItemForm({ mode, itemId, defaultValues }: StockItemFormProp
           </motion.div>
         </FormField>
 
-        <FormField id="price" label="Price" error={errors.price?.message}>
+        <FormField id="price" label="Price (optional)" error={errors.price?.message}>
           <motion.div
             animate={errors.price ? { x: [0, -6, 6, -4, 4, 0] } : { x: 0 }}
             transition={{ duration: 0.35 }}

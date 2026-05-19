@@ -12,14 +12,13 @@ export const stockItemFormSchema = z.object({
   price: z
     .string()
     .trim()
-    .min(1, "Price is required")
-    .refine((value) => pricePattern.test(value), {
+    .refine((value) => value === "" || pricePattern.test(value), {
       message: "Enter a valid price (e.g. 12.99)",
     })
-    .refine((value) => parseFloat(value) > 0, {
+    .refine((value) => value === "" || parseFloat(value) > 0, {
       message: "Price must be greater than 0",
     })
-    .refine((value) => parseFloat(value) <= 999_999.99, {
+    .refine((value) => value === "" || parseFloat(value) <= 999_999.99, {
       message: "Price is too high",
     }),
   unit: z
@@ -63,7 +62,7 @@ export function toStockItemPayload(
 ) {
   return {
     name: values.name.trim(),
-    price: parseFloat(values.price),
+    price: values.price.trim() ? parseFloat(values.price) : null,
     unit: values.unit.trim(),
     brand: values.brand.trim(),
     quantity: parseInt(values.quantity, 10),

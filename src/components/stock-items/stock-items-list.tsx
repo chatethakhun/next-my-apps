@@ -39,7 +39,9 @@ export function StockItemsList({ items }: StockItemsListProps) {
                 {item.name}
               </p>
               <p className="mt-1 text-zinc-600 dark:text-zinc-400">
-                {item.brand} · {item.price} / {item.unit} · Qty {item.quantity}
+                {item.brand}
+                {item.price != null ? ` · ${item.price} / ${item.unit}` : ` · ${item.unit}`} · Qty{" "}
+                {item.quantity}
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-1">

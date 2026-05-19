@@ -3,7 +3,7 @@ import type { StockItemFormValues } from "@/lib/stock-items/schema";
 export type StockItem = {
   id: string;
   name: string;
-  price: number;
+  price: number | null;
   unit: string;
   brand: string;
   quantity: number;
@@ -25,7 +25,7 @@ export function toStockItemFormValues(
 ): StockItemFormValues {
   return {
     name: item.name,
-    price: String(item.price),
+    price: item.price != null ? String(item.price) : "",
     unit: item.unit,
     brand: item.brand,
     quantity: String(item.quantity),
@@ -43,7 +43,10 @@ export function normalizeStockItem(value: unknown): StockItem | null {
   return {
     id: String(id),
     name: String(item.name ?? ""),
-    price: Number(item.price ?? 0),
+    price:
+      item.price === null || item.price === undefined || item.price === ""
+        ? null
+        : Number(item.price),
     unit: String(item.unit ?? ""),
     brand: String(item.brand ?? ""),
     quantity: Number(item.quantity ?? 0),
